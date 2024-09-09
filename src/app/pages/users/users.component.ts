@@ -1,16 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild, viewChild } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, MatTableModule],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatTabsModule,
+    MatCardModule,
+    MatInputModule,
+    FormsModule,
+  ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersComponent {
+  @ViewChild('tabGroup') tabGroup!: MatTabGroup;
+  userSelected = false;
   displayedColumns: string[] = [
     'id',
     'name',
@@ -47,5 +61,7 @@ export class UsersComponent {
   ];
 
   selectedUser(user: any) {
+    this.tabGroup.selectedIndex = 1;
+    this.userSelected = true;
   }
 }

@@ -1,3 +1,36 @@
 :host {
   display: block;
 }
+.row{
+  &:hover{
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+.edit-card{
+  margin-top: 4px;
+  background-color: rgba($color: #000000, $alpha: 0.1);
+  color:black;
+}
+
+h3{
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+.edit-container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form-row{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+
+@media screen and (min-width: 1400px) {
+.long-input {
+  min-width: 600px;
+}
+}

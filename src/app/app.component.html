@@ -1,10 +1,10 @@
 <mat-toolbar>
-  <button (click)="drawer.toggle()" mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+  <button (click)="drawer.toggle()" mat-icon-button>
     <mat-icon>menu</mat-icon>
   </button>
   <span>{{title}}</span>
-  <span class="example-spacer"></span>
 </mat-toolbar>
+<mat-divider></mat-divider>
 <mat-drawer-container class="sidenav-container" autosize>
   <mat-drawer #drawer class="sidenav" mode="side" opened="true">
     <div class="button-container">
