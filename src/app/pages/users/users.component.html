@@ -35,6 +35,8 @@
  </mat-tab>
   <mat-tab label="Editar" [disabled]="!userSelected">
     <div class="edit-container">
+<!-- Informacion personal -->
+
       <mat-card appearance="outlined" class="edit-card">
         <mat-card-content><h3>
           Información personal
@@ -58,8 +60,11 @@
           <mat-label>Fecha de nacimiento</mat-label>
           <input matInput>
         </mat-form-field>
+
       </div>
     </div>
+<!-- Informacion Laboral -->
+
 <div class="edit-container">
   <mat-card appearance="outlined" class="edit-card">
     <mat-card-content>
@@ -81,6 +86,42 @@
     </mat-form-field>
     <mat-form-field class="long-input">
       <mat-label>Titulo</mat-label>
+      <input matInput>
+    </mat-form-field>
+  </div>
+</div>
+
+<!-- Informacion Complementaria -->
+
+<div class="edit-container">
+  <mat-card appearance="outlined" class="edit-card">
+    <mat-card-content>
+      <h3>
+        Información complementaria
+      </h3>
+    </mat-card-content>
+  </mat-card>
+  <div class="form-row">
+    <mat-form-field>
+      <mat-label>Discapacidad</mat-label>
+      <mat-select>
+        <mat-option value="one">Si</mat-option>
+        <mat-option value="two">No</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Pensinado</mat-label>
+      <mat-select>
+        <mat-option value="one">Si</mat-option>
+        <mat-option value="two">No</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>AFP</mat-label>
+      <input matInput>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Sistema de salud</mat-label>
       <input matInput>
     </mat-form-field>
   </div>

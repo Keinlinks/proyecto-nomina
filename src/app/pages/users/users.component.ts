@@ -5,6 +5,7 @@ import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @Component({
@@ -17,6 +18,7 @@ import { FormsModule } from '@angular/forms';
     MatCardModule,
     MatInputModule,
     FormsModule,
+    MatSelectModule,
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
