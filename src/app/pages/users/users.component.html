@@ -33,103 +33,121 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectedUser(row)" class="row"></tr>
   </table>
  </mat-tab>
+<form [formGroup]="form">
   <mat-tab label="Editar" [disabled]="!userSelected">
-    <div class="edit-container">
-<!-- Informacion personal -->
+    <form class="edit-container" formGroupName="personalInformation">
+      <!-- Informacion personal -->
 
       <mat-card appearance="outlined" class="edit-card">
-        <mat-card-content><h3>
-          Información personal
-        </h3>
-      </mat-card-content>
+        <mat-card-content>
+          <h3>
+            Información personal
+          </h3>
+        </mat-card-content>
       </mat-card>
       <div class="form-row">
         <mat-form-field>
           <mat-label>Nombres</mat-label>
-          <input matInput>
+          <input formControlName="name" matInput>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Apellidos</mat-label>
-          <input matInput>
+          <input formControlName="lastName" matInput>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Rut</mat-label>
-          <input matInput>
+          <input formControlName="rut" matInput>
         </mat-form-field>
-        <mat-form-field >
+        <mat-form-field>
           <mat-label>Fecha de nacimiento</mat-label>
-          <input matInput>
+          <input formControlName="birthDate" matInput>
         </mat-form-field>
 
       </div>
-    </div>
-<!-- Informacion Laboral -->
+    </form>
+    <!-- Informacion Laboral -->
 
-<div class="edit-container">
-  <mat-card appearance="outlined" class="edit-card">
-    <mat-card-content>
-      <h3>
-        Información laboral
+    <form class="edit-container" formGroupName="laboralInformation">
+      <mat-card appearance="outlined" class="edit-card">
+        <mat-card-content>
+          <h3>
+            Información laboral
 
-      </h3>
+          </h3>
 
-    </mat-card-content>
-  </mat-card>
-  <div class="form-row">
-    <mat-form-field>
-      <mat-label>Fecha de ingreso</mat-label>
-      <input matInput>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Fecha de salida</mat-label>
-      <input matInput>
-    </mat-form-field>
-    <mat-form-field class="long-input">
-      <mat-label>Titulo</mat-label>
-      <input matInput>
-    </mat-form-field>
-  </div>
-</div>
+        </mat-card-content>
+      </mat-card>
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>Fecha de ingreso</mat-label>
+          <input formControlName="entryDate" matInput [matDatepicker]="entryDatePicker">
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="entryDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #entryDatePicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Fecha de salida</mat-label>
+          <input formControlName="exitDate" matInput  [matDatepicker]="exitDatePicker">
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="exitDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #exitDatePicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="long-input">
+          <mat-label>Titulo universitario</mat-label>
+          <input formControlName="title" matInput>
+        </mat-form-field>
+      </div>
+    </form>
 
-<!-- Informacion Complementaria -->
+    <!-- Informacion Complementaria -->
 
-<div class="edit-container">
-  <mat-card appearance="outlined" class="edit-card">
-    <mat-card-content>
-      <h3>
-        Información complementaria
-      </h3>
-    </mat-card-content>
-  </mat-card>
-  <div class="form-row">
-    <mat-form-field>
-      <mat-label>Discapacidad</mat-label>
-      <mat-select>
-        <mat-option value="one">Si</mat-option>
-        <mat-option value="two">No</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Pensinado</mat-label>
-      <mat-select>
-        <mat-option value="one">Si</mat-option>
-        <mat-option value="two">No</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>AFP</mat-label>
-      <input matInput>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Sistema de salud</mat-label>
-      <input matInput>
-    </mat-form-field>
-  </div>
-</div>
+    <form class="edit-container" formGroupName="complementaryInformation">
+      <mat-card appearance="outlined" class="edit-card">
+        <mat-card-content>
+          <h3>
+            Información complementaria
+          </h3>
+        </mat-card-content>
+      </mat-card>
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>Discapacidad</mat-label>
+          <mat-select formControlName="disability">
+            <mat-option value="Si">Si</mat-option>
+            <mat-option value="No">No</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Pensionado</mat-label>
+          <mat-select formControlName="pension">
+            <mat-option value="Si">Si</mat-option>
+            <mat-option value="No">No</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>AFP</mat-label>
+          <input formControlName="afp" matInput>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Sistema de salud</mat-label>
+          <input formControlName="healthSystem" matInput>
+        </mat-form-field>
+      </div>
+      <div>
+        <button (click)="createResume()" mat-raised-button color="primary">Siguiente</button>
+      </div>
+    </form>
   </mat-tab>
-  <mat-tab label="Guardar" [disabled]="!userSelected">
-    <div class="save-container">
-      <button mat-raised-button color="primary">Guardar</button>
-    </div>
-  </mat-tab>
+    <mat-tab label="Guardar" [disabled]="!userSelected">
+      <div class="save-container ">
+        <div class="flex justify-center">
+          <div id="iframeContainer" style="width: 800px; height: 600px;"></div>
+        </div>
+        <button (click)="saveChanges()" mat-raised-button color="primary">Guardar</button>
+      </div>
+    </mat-tab>
+</form>
+
+
+
 </mat-tab-group>
