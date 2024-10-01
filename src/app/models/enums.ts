@@ -9,4 +9,5 @@ export enum UserDisplayInformation {
   exitDate = 'Fecha de salida',
   afp = 'AFP',
   healthSystem = 'Sistema de salud',
+  title = 'Titulo universitario',
 }

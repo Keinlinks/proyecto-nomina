@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, viewChild } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
@@ -35,9 +35,11 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 })
 export class UsersComponent implements OnInit {
   @ViewChild('tabGroup') tabGroup!: MatTabGroup;
+  @ViewChild('pdfContainer') pdfContainer!: ElementRef;
   form!: FormGroup;
   userSelected = false;
   pdf!: pdfMake.TCreatedPdf;
+  pdfGenerated = false;
   displayedColumns: string[] = [
     'id',
     'name',
@@ -46,16 +48,6 @@ export class UsersComponent implements OnInit {
     'dateOut',
     'afp',
   ];
-  displayInformation = {
-    name: { label: 'Nombres', value: 'name' },
-    lastName: { label: 'Apellidos', value: 'lastName' },
-    rut: { label: 'Rut', value: 'rut' },
-    birthDate: { label: 'Fecha de nacimiento', value: 'birthDate' },
-    pension: { label: 'Pensionado', value: 'pension' },
-    disability: { label: 'Discapacidad', value: 'disability' },
-    afp: { label: 'AFP', value: 'afp' },
-    healthSystem: { label: 'Sistema de salud', value: 'healthSystem' },
-  };
   dataSource = [
     {
       id: 1,
@@ -64,25 +56,89 @@ export class UsersComponent implements OnInit {
       rut: '12345678901',
       dateIn: '2020-01-01',
       dateOut: '2020-12-31',
-      afp: '100',
+      title: 'Ingeniero de Sistemas',
+      afp: 'Capital',
+      disability: 'No',
+      pension: 'No',
+      healthSystem: 'FONASA',
     },
     {
       id: 2,
-      name: 'Jane',
-      lastName: 'Doe',
-      rut: '12345678902',
-      dateIn: '2020-01-01',
-      dateOut: '2020-12-31',
-      afp: '200',
+      name: 'Alice',
+      lastName: 'Smith',
+      rut: '98765432109',
+      dateIn: '2019-03-15',
+      dateOut: '2021-05-30',
+      title: 'Analista de Datos',
+      afp: 'Cuprum',
+      disability: 'No',
+      pension: 'Sí',
+      healthSystem: 'Provida',
     },
     {
       id: 3,
-      name: 'Joe',
-      lastName: 'Doe',
-      rut: '12345678903',
-      dateIn: '2020-01-01',
-      dateOut: '2020-12-31',
-      afp: '300',
+      name: 'Carlos',
+      lastName: 'González',
+      rut: '13579246810',
+      dateIn: '2018-02-01',
+      dateOut: '2022-11-15',
+      title: 'Desarrollador Full Stack',
+      afp: 'Cuprum',
+      disability: 'Sí',
+      pension: 'No',
+      healthSystem: 'ISAPRE',
+    },
+    {
+      id: 4,
+      name: 'Maria',
+      lastName: 'Pérez',
+      rut: '24681012141',
+      dateIn: '2021-07-10',
+      dateOut: '2023-06-01',
+      title: 'Especialista en Marketing',
+      afp: 'Habitat',
+      disability: 'No',
+      pension: 'Sí',
+      healthSystem: 'ISAPRE',
+    },
+    {
+      id: 5,
+      name: 'Javier',
+      lastName: 'Fernández',
+      rut: '11223344556',
+      dateIn: '2017-04-20',
+      dateOut: '2019-09-30',
+      title: 'Ingeniero Civil',
+      afp: 'Habitat',
+      disability: 'No',
+      pension: 'No',
+      healthSystem: 'ISAPRE',
+    },
+    {
+      id: 6,
+      name: 'Laura',
+      lastName: 'Martínez',
+      rut: '99887766554',
+      dateIn: '2020-08-05',
+      dateOut: '2022-12-31',
+      title: 'Contadora Pública',
+      afp: 'Capital',
+      disability: 'No',
+      pension: 'Sí',
+      healthSystem: 'FONASA',
+    },
+    {
+      id: 7,
+      name: 'Miguel',
+      lastName: 'Ramírez',
+      rut: '55443322111',
+      dateIn: '2019-09-01',
+      dateOut: '2021-12-01',
+      title: 'Gerente de Proyectos',
+      afp: 'Capital',
+      disability: 'Sí',
+      pension: 'No',
+      healthSystem: 'FONASA',
     },
   ];
 
@@ -111,6 +167,7 @@ export class UsersComponent implements OnInit {
   selectedUser(user: any) {
     document.querySelector('#iframeContainer')?.remove();
     this.form.reset();
+    this.pdfGenerated = false;
     this.tabGroup.selectedIndex = 1;
     this.userSelected = true;
     this.form.get('personalInformation')?.setValue({
@@ -119,7 +176,17 @@ export class UsersComponent implements OnInit {
       rut: user.rut,
       birthDate: user.dateIn,
     });
-
+    this.form.get('laboralInformation')?.setValue({
+      entryDate: user.dateIn,
+      exitDate: user.dateOut,
+      title: user.title,
+    });
+    this.form.get('complementaryInformation')?.setValue({
+      disability: user.disability,
+      pension: user.pension,
+      afp: user.afp,
+      healthSystem: user.healthSystem,
+    });
   }
   getStringOrNumberValues(
     obj: any,
@@ -142,8 +209,10 @@ export class UsersComponent implements OnInit {
     return result;
   }
   createResume() {
-    this.tabGroup.selectedIndex = 2;
-
+    this.pdfGenerated = true;
+    let pdfContainer = this.pdfContainer.nativeElement as HTMLElement;
+    pdfContainer.innerHTML = '';
+    document.querySelector('#iframeContainer')?.remove();
     let userData = this.form.getRawValue();
     let information = this.getStringOrNumberValues(userData);
     information.forEach((item) => {
@@ -185,11 +254,12 @@ export class UsersComponent implements OnInit {
     this.pdf.getDataUrl((dataUrl) => {
       const targetElement = document.querySelector('#iframeContainer');
       const iframe = document.createElement('iframe');
-      iframe.style.width = '800px';
+      iframe.style.width = '500px';
       iframe.style.height = '600px';
       iframe.src = dataUrl;
       targetElement?.appendChild(iframe);
     });
+    this.tabGroup.selectedIndex = 2;
   }
 
   saveChanges() {}

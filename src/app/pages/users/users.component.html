@@ -138,10 +138,10 @@
       </div>
     </form>
   </mat-tab>
-    <mat-tab label="Guardar" [disabled]="!userSelected">
+    <mat-tab label="Guardar" [disabled]="!userSelected || !pdfGenerated">
       <div class="save-container ">
         <div class="flex justify-center">
-          <div id="iframeContainer" style="width: 800px; height: 600px;"></div>
+          <div id="iframeContainer" style="width: 800px; height: 600px;" #pdfContainer></div>
         </div>
         <button (click)="saveChanges()" mat-raised-button color="primary">Guardar</button>
       </div>
