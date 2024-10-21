@@ -1,1 +1,30 @@
-<p>calculate works!</p>
+<form [formGroup]="nominalSalaryForm" class="p-5 flex gap-5">
+  <mat-form-field floatLabel="always">
+    <mat-label>Salario</mat-label>
+    <input formControlName="salary" type="number" matInput class="number-input">
+    <span matTextPrefix>$&nbsp;</span>
+  </mat-form-field>
+    <mat-form-field floatLabel="always">
+      <mat-label>Horas trabajadas</mat-label>
+      <input formControlName="hours" type="number" matInput class="number-input">
+      <span matTextSuffix>hrs&nbsp;</span>
+    </mat-form-field>
+    <mat-form-field floatLabel="always">
+      <mat-label>Bonos</mat-label>
+      <input formControlName="bonus" type="number" matInput class="number-input">
+      <span matTextSuffix>$&nbsp;</span>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>AFP</mat-label>
+      <mat-select formControlName="afp">
+        <mat-option value="Capital">Capital</mat-option>
+        <mat-option value="Cuprum">Cuprum</mat-option>
+        <mat-option value="Habitat">Habitat</mat-option>
+        <mat-option value="Modelo">Modelo</mat-option>
+        <mat-option value="Planvital">Planvital</mat-option>
+        <mat-option value="Provida">Provida</mat-option>
+        <mat-option value="Uno">Uno</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-flat-button (click)="calculateNominal()">Calcular</button>
+  </form>
