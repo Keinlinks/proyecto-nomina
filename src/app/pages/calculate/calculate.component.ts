@@ -16,6 +16,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CalculateComponent {
   http = inject(HttpClient);
+  nominalSalaryResult: string = '';
   nominalSalaryForm = new FormGroup({
     salary: new FormControl(0),
     hours: new FormControl(0),
@@ -24,8 +25,8 @@ export class CalculateComponent {
     afp: new FormControl(''),
   });
   calculateNominal(){
-    this.http.post('nominalSalary',this.nominalSalaryForm.getRawValue()).subscribe(result=>{
-
+    this.http.post<string>('nominalSalary',this.nominalSalaryForm.getRawValue()).subscribe((result)=>{
+      this.nominalSalaryResult = result;
     })
   }
 }
