@@ -26,6 +26,16 @@
         <mat-option value="Uno">Uno</mat-option>
       </mat-select>
     </mat-form-field>
+        <mat-form-field>
+          <mat-label>Sistema de salud</mat-label>
+          <mat-select formControlName="healthSystem">
+          <mat-option value="Fonasa">Fonasa</mat-option>
+          <mat-option value="Isapre">Isapre</mat-option>
+          <mat-option value="Particular">Particular</mat-option>
+          <mat-option value="Capredena">Capredena</mat-option>
+          <mat-option value="Dipreca">Dipreca</mat-option>
+          </mat-select>
+        </mat-form-field>
     <button mat-flat-button (click)="calculateNominal()">Calcular</button>
   </form>
 <div class="p-5" *ngIf="salaryLiquid > 0">

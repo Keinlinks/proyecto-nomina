@@ -9,7 +9,15 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-calculate',
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatInputModule, MatSelectModule,FormsModule,ReactiveFormsModule,MatButtonModule],
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+  ],
   templateUrl: './calculate.component.html',
   styleUrl: './calculate.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,8 +34,9 @@ export class CalculateComponent {
     bonus: new FormControl(0, [Validators.required]),
     commission: new FormControl(0, [Validators.required]),
     afp: new FormControl('', [Validators.required]),
+    healthSystem: new FormControl('', [Validators.required]),
   });
-  calculateNominal(){
+  calculateNominal() {
     if (this.nominalSalaryForm && this.nominalSalaryForm.invalid) return;
     this.http
       .post<string>(
@@ -35,7 +44,7 @@ export class CalculateComponent {
         this.nominalSalaryForm.getRawValue()
       )
       .subscribe((result) => {
-        let form:any = this.nominalSalaryForm.getRawValue();
+        let form: any = this.nominalSalaryForm.getRawValue();
         this.salaryBruto = form.salary * form.hours + form.bonus;
         this.salaryLiquid = +result;
         this.cd.detectChanges();
