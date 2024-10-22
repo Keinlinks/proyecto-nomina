@@ -28,7 +28,8 @@
     </mat-form-field>
     <button mat-flat-button (click)="calculateNominal()">Calcular</button>
   </form>
-<div *ngIf="nominalSalaryResult">
-  <h3>Resultado</h3>
-  <p>Prediccion nominal: {{nominalSalaryResult}}</p>
+<div class="p-5" *ngIf="salaryLiquid > 0">
+  <h3 class="flex justify-center">Resultados</h3>
+  <p>Salario bruto: <span style="font-weight: bolder;">${{salaryBruto}}</span></p>
+  <p>Salario liquido: <span style="font-weight: bolder;">${{salaryLiquid}}</span></p>
 </div>
