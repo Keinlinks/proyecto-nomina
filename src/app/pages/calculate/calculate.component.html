@@ -46,7 +46,7 @@
     <button mat-flat-button (click)="calculateNominal()">Calcular</button>
   </form>
 <div class="p-5" *ngIf="nominalSalaryData.length > 0">
-<table mat-table [dataSource]="nominalSalaryData" class="mat-elevation-z8">
+<table [fixedLayout]="true" mat-table [dataSource]="nominalSalaryData" class="mat-elevation-z8">
   <!-- Position Column -->
   <ng-container matColumnDef="salary_per_day">
     <th mat-header-cell *matHeaderCellDef> Salario por dia </th>
