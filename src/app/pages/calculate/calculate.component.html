@@ -7,7 +7,6 @@
   <mat-form-field floatLabel="always">
     <mat-label>dias trabajados</mat-label>
     <input formControlName="day_worked" type="number" matInput class="number-input">
-    <span matTextPrefix>$&nbsp;</span>
   </mat-form-field>
     <mat-form-field floatLabel="always">
       <mat-label>Horas extra</mat-label>
@@ -44,6 +43,12 @@
           </mat-select>
         </mat-form-field>
     <button mat-flat-button (click)="calculateNominal()">Calcular</button>
+    <ng-container *ngIf="editMode">
+      <button mat-flat-button (click)="closeModal.emit()">Cerrar</button>
+    </ng-container>
+    <ng-container *ngIf="editMode && nominalSalaryData.length > 0 && rut">
+      <button mat-flat-button (click)="savePayroll()">Guardar</button>
+    </ng-container>
   </form>
 <div class="p-5" *ngIf="nominalSalaryData.length > 0">
 <table [fixedLayout]="true" mat-table [dataSource]="nominalSalaryData" class="mat-elevation-z8">
@@ -102,6 +107,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+
 </div>
 <div *ngIf="loading" class="flex justify-center">
   <mat-spinner></mat-spinner>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
@@ -12,6 +12,11 @@ import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { UserDisplayInformation } from '../../models/enums';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { ApiService } from '../../services/api.service';
+import { UserI } from '../../models/UserI';
+import { RutParsePipe } from '../../pipes/rutParse.pipe';
+import { CalculateComponent } from '../calculate/calculate.component';
+import { Payroll } from '../../models/Payroll';
 
 @Component({
   selector: 'app-users',
@@ -27,6 +32,9 @@ import { provideNativeDateAdapter } from '@angular/material/core';
     ReactiveFormsModule,
     MatButtonModule,
     MatDatepickerModule,
+    RutParsePipe,
+    MatButtonModule,
+    CalculateComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './users.component.html',
@@ -34,9 +42,15 @@ import { provideNativeDateAdapter } from '@angular/material/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersComponent implements OnInit {
+  apiService = inject(ApiService);
+  cd = inject(ChangeDetectorRef);
   @ViewChild('tabGroup') tabGroup!: MatTabGroup;
   @ViewChild('pdfContainer') pdfContainer!: ElementRef;
   form!: FormGroup;
+  payrollModal = false;
+  loading = false;
+  rutSelected: string | null = null;
+  readOnlyNominal:Payroll | null = null;
   userSelected = false;
   pdf!: pdfMake.TCreatedPdf;
   pdfGenerated = false;
@@ -44,116 +58,25 @@ export class UsersComponent implements OnInit {
     'id',
     'name',
     'rut',
-    'dateIn',
-    'dateOut',
+    'entry_date',
+    'exit_date',
     'afp',
+    'payroll',
+    'edit'
   ];
-  dataSource = [
-    {
-      id: 1,
-      name: 'John',
-      lastName: 'Doe',
-      rut: '12345678901',
-      dateIn: '2020-01-01',
-      dateOut: '2020-12-31',
-      title: 'Ingeniero de Sistemas',
-      afp: 'Capital',
-      disability: 'No',
-      pension: 'No',
-      healthSystem: 'FONASA',
-    },
-    {
-      id: 2,
-      name: 'Alice',
-      lastName: 'Smith',
-      rut: '98765432109',
-      dateIn: '2019-03-15',
-      dateOut: '2021-05-30',
-      title: 'Analista de Datos',
-      afp: 'Cuprum',
-      disability: 'No',
-      pension: 'Sí',
-      healthSystem: 'Provida',
-    },
-    {
-      id: 3,
-      name: 'Carlos',
-      lastName: 'González',
-      rut: '13579246810',
-      dateIn: '2018-02-01',
-      dateOut: '2022-11-15',
-      title: 'Desarrollador Full Stack',
-      afp: 'Cuprum',
-      disability: 'Sí',
-      pension: 'No',
-      healthSystem: 'ISAPRE',
-    },
-    {
-      id: 4,
-      name: 'Maria',
-      lastName: 'Pérez',
-      rut: '24681012141',
-      dateIn: '2021-07-10',
-      dateOut: '2023-06-01',
-      title: 'Especialista en Marketing',
-      afp: 'Habitat',
-      disability: 'No',
-      pension: 'Sí',
-      healthSystem: 'ISAPRE',
-    },
-    {
-      id: 5,
-      name: 'Javier',
-      lastName: 'Fernández',
-      rut: '11223344556',
-      dateIn: '2017-04-20',
-      dateOut: '2019-09-30',
-      title: 'Ingeniero Civil',
-      afp: 'Habitat',
-      disability: 'No',
-      pension: 'No',
-      healthSystem: 'ISAPRE',
-    },
-    {
-      id: 6,
-      name: 'Laura',
-      lastName: 'Martínez',
-      rut: '99887766554',
-      dateIn: '2020-08-05',
-      dateOut: '2022-12-31',
-      title: 'Contadora Pública',
-      afp: 'Capital',
-      disability: 'No',
-      pension: 'Sí',
-      healthSystem: 'FONASA',
-    },
-    {
-      id: 7,
-      name: 'Miguel',
-      lastName: 'Ramírez',
-      rut: '55443322111',
-      dateIn: '2019-09-01',
-      dateOut: '2021-12-01',
-      title: 'Gerente de Proyectos',
-      afp: 'Capital',
-      disability: 'Sí',
-      pension: 'No',
-      healthSystem: 'FONASA',
-    },
-  ];
+  dataSource: UserI[] = [];
 
   ngOnInit(): void {
     this.form = new FormGroup({
       personalInformation: new FormGroup({
         name: new FormControl(''),
-        lastName: new FormControl(''),
         rut: new FormControl(''),
-        birthDate: new FormControl(''),
+        birth_date: new FormControl(new Date()),
       }),
       laboralInformation: new FormGroup({
-        entryDate: new FormControl(''),
-        exitDate: new FormControl(''),
-        title: new FormControl(''),
+        entryDate: new FormControl(new Date()),
+        exitDate: new FormControl(new Date()),
+        title: new FormControl(new Date()),
       }),
       complementaryInformation: new FormGroup({
         disability: new FormControl(''),
@@ -161,6 +84,9 @@ export class UsersComponent implements OnInit {
         afp: new FormControl(''),
         healthSystem: new FormControl(''),
       }),
+    });
+    this.apiService.getUsers(0).subscribe((users) => {
+      this.dataSource = users;
     });
   }
 
@@ -172,20 +98,19 @@ export class UsersComponent implements OnInit {
     this.userSelected = true;
     this.form.get('personalInformation')?.setValue({
       name: user.name,
-      lastName: user.lastName,
       rut: user.rut,
-      birthDate: user.dateIn,
+      birth_date: user.birth_date,
     });
     this.form.get('laboralInformation')?.setValue({
-      entryDate: user.dateIn,
-      exitDate: user.dateOut,
+      entryDate: user.entry_date,
+      exitDate: user.exit_date,
       title: user.title,
     });
     this.form.get('complementaryInformation')?.setValue({
-      disability: user.disability,
-      pension: user.pension,
+      disability: user.discapacity ? 'Si' : 'No',
+      pension: user.pensioned ? 'Si' : 'No',
       afp: user.afp,
-      healthSystem: user.healthSystem,
+      healthSystem: user.health_system,
     });
   }
   getStringOrNumberValues(
@@ -262,5 +187,42 @@ export class UsersComponent implements OnInit {
     this.tabGroup.selectedIndex = 2;
   }
 
-  saveChanges() {}
+  getPayroll(user: UserI) {
+    this.apiService.getPayroll(user.rut).subscribe((payroll) => {
+      console.log(payroll);
+      this.readOnlyNominal = payroll;
+      this.rutSelected = user.rut;
+      this.payrollModal = true;
+      this.cd.detectChanges();
+    });
+  }
+
+  saveChanges() {
+    this.loading = true;
+    let payload: UserI = {
+      rut: this.form.getRawValue().personalInformation.rut,
+      name: this.form.getRawValue().personalInformation.name,
+      birth_date: this.form.getRawValue().personalInformation.birth_date,
+      entry_date: this.form.getRawValue().laboralInformation.entryDate,
+      exit_date: this.form.getRawValue().laboralInformation.exitDate,
+      title: this.form.getRawValue().laboralInformation.title,
+      discapacity:
+        this.form.getRawValue().complementaryInformation.disability === 'Si',
+      pensioned:
+        this.form.getRawValue().complementaryInformation.pension === 'Si',
+      afp: this.form.getRawValue().complementaryInformation.afp,
+      health_system:
+        this.form.getRawValue().complementaryInformation.healthSystem,
+      salary_per_day: this.form.getRawValue().laboralInformation.salaryPerDay,
+    };
+    this.apiService.saveUser(payload).subscribe((user) => {
+      alert('Guardado: ' + user.name);
+      this.loading = false;
+      this.tabGroup.selectedIndex = 0;
+      this.apiService.getUsers(0).subscribe((users) => {
+        this.dataSource = users;
+      });
+      this.cd.detectChanges();
+    });
+  }
 }

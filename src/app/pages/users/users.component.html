@@ -1,8 +1,8 @@
 <mat-tab-group #tabGroup>
   <mat-tab label="Seleccion"> <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef> ID </th>
-      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      <th mat-header-cell *matHeaderCellDef> Rut </th>
+      <td mat-cell *matCellDef="let element"> {{element.rut | RutParse}} </td>
     </ng-container>
 
     <ng-container matColumnDef="name">
@@ -15,22 +15,30 @@
       <td mat-cell *matCellDef="let element"> {{element.rut}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="dateIn">
+    <ng-container matColumnDef="entry_date">
       <th mat-header-cell *matHeaderCellDef> Fecha de ingreso </th>
-      <td mat-cell *matCellDef="let element"> {{element.dateIn}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.entry_date | date:'mediumDate'}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="dateOut">
+    <ng-container matColumnDef="exit_date">
       <th mat-header-cell *matHeaderCellDef> Fecha de salida </th>
-      <td mat-cell *matCellDef="let element"> {{element.dateOut}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.exit_date | date:'mediumDate'}} </td>
     </ng-container>
     <ng-container matColumnDef="afp">
       <th mat-header-cell *matHeaderCellDef> Afp </th>
       <td mat-cell *matCellDef="let element"> {{element.afp}} </td>
     </ng-container>
+    <ng-container matColumnDef="payroll">
+      <th mat-header-cell *matHeaderCellDef> Nomina </th>
+      <td mat-cell *matCellDef="let element"> <button type="button" mat-raised-button color="primary" (click)="getPayroll(element)">Nomina</button> </td>
+    </ng-container>
+    <ng-container matColumnDef="edit">
+      <th mat-header-cell *matHeaderCellDef> Editar </th>
+      <td mat-cell *matCellDef="let element"> <button type="button" mat-raised-button color="primary" (click)="selectedUser(element)">Editar</button> </td>
+    </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectedUser(row)" class="row"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row"></tr>
   </table>
  </mat-tab>
 <form [formGroup]="form">
@@ -47,12 +55,8 @@
       </mat-card>
       <div class="form-row">
         <mat-form-field>
-          <mat-label>Nombres</mat-label>
+          <mat-label>Nombre</mat-label>
           <input formControlName="name" matInput>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Apellidos</mat-label>
-          <input formControlName="lastName" matInput>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Rut</mat-label>
@@ -60,7 +64,10 @@
         </mat-form-field>
         <mat-form-field>
           <mat-label>Fecha de nacimiento</mat-label>
-          <input formControlName="birthDate" matInput>
+          <input formControlName="birth_date" matInput [matDatepicker]="birthDatePicker">
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #birthDatePicker></mat-datepicker>
         </mat-form-field>
 
       </div>
@@ -151,11 +158,19 @@
         <div class="flex justify-center">
           <div id="iframeContainer" style="width: 800px; height: 600px;" #pdfContainer></div>
         </div>
-        <button (click)="saveChanges()" mat-raised-button color="primary">Guardar</button>
+        <button [disabled]="loading" (click)="saveChanges()" mat-raised-button color="primary">Guardar</button>
       </div>
     </mat-tab>
 </form>
-
-
-
 </mat-tab-group>
+
+<ng-container *ngIf="payrollModal">
+  <div class="modal">
+    <div class="modal-content">
+      <app-calculate [readOnlyNominal]="readOnlyNominal" [editMode]="true" (closeModal)="payrollModal = false" [rut]="rutSelected"></app-calculate>
+    </div>
+  </div>
+  <div class="blocker">
+
+  </div>
+</ng-container>
