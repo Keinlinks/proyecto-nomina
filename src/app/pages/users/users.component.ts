@@ -55,7 +55,6 @@ export class UsersComponent implements OnInit {
   pdf!: pdfMake.TCreatedPdf;
   pdfGenerated = false;
   displayedColumns: string[] = [
-    'id',
     'name',
     'rut',
     'entry_date',
@@ -215,6 +214,7 @@ export class UsersComponent implements OnInit {
         this.form.getRawValue().complementaryInformation.healthSystem,
       salary_per_day: this.form.getRawValue().laboralInformation.salaryPerDay,
     };
+    console.log(payload);
     this.apiService.saveUser(payload).subscribe((user) => {
       alert('Guardado: ' + user.name);
       this.loading = false;
